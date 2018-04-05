@@ -34,6 +34,9 @@ class Config:
         self._confpreface2 = "An error has occured validating the config:\n"
 
         self._login_token = config.get('Credentials', 'Token', fallback=ConfigDefaults.token)
+        self._user_email = config.get('Credentials', 'Email', fallback=ConfigDefaults.email)
+        self._user_password = config.get('Credentials', 'Password', fallback=ConfigDefaults.password)
+        self.bot = config.getboolean('Credentials', 'Bot', fallback=ConfigDefaults.bot)
 
         self.auth = ()
 
@@ -52,6 +55,7 @@ class Config:
         self.skip_ratio_required = config.getfloat('MusicBot', 'SkipRatio', fallback=ConfigDefaults.skip_ratio_required)
         self.save_videos = config.getboolean('MusicBot', 'SaveVideos', fallback=ConfigDefaults.save_videos)
         self.now_playing_mentions = config.getboolean('MusicBot', 'NowPlayingMentions', fallback=ConfigDefaults.now_playing_mentions)
+        self.now_playing = config.getboolean('MusicBot', 'NowPlaying', fallback=ConfigDefaults.now_playing)
         self.auto_summon = config.getboolean('MusicBot', 'AutoSummon', fallback=ConfigDefaults.auto_summon)
         self.auto_playlist = config.getboolean('MusicBot', 'UseAutoPlaylist', fallback=ConfigDefaults.auto_playlist)
         self.auto_playlist_random = config.getboolean('MusicBot', 'AutoPlaylistRandom', fallback=ConfigDefaults.auto_playlist_random)
@@ -122,7 +126,9 @@ class Config:
 
         log.info('Using i18n: {0}'.format(self.i18n_file))
 
-        if not self._login_token:
+        if self._user_email and self._user_password:
+            self.auth = [self._user_email, self._user_password]
+        elif not self._login_token:
             raise HelpfulError(
                 "No bot token was specified in the config.",
                 "As of v1.9.6_1, you are required to use a Discord bot account. "
@@ -301,6 +307,9 @@ class ConfigDefaults:
     owner_id = None
 
     token = None
+    email = None
+    password = None
+    bot = True
     dev_ids = set()
 
     spotify_clientid = None
@@ -315,6 +324,7 @@ class ConfigDefaults:
     skip_ratio_required = 0.5
     save_videos = True
     now_playing_mentions = False
+    now_playing = True
     auto_summon = True
     auto_playlist = True
     auto_playlist_random = True
