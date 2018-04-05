@@ -639,7 +639,7 @@ class MusicBot(discord.Client):
             elif self.config.now_playing_mentions:
                 newmsg = '%s - your song `%s` is now playing in `%s`!' % (
                     entry.meta['author'].mention, entry.title, player.voice_client.channel.name)
-            else:
+            elif self.config.now_playing:
                 newmsg = 'Now playing in `%s`: `%s` added by `%s`' % (
                     player.voice_client.channel.name, entry.title, entry.meta['author'].name)
 
@@ -1021,7 +1021,7 @@ class MusicBot(discord.Client):
     # noinspection PyMethodOverriding
     def run(self):
         try:
-            self.loop.run_until_complete(self.start(*self.config.auth))
+            self.loop.run_until_complete(self.start(*self.config.auth, bot=self.config.bot))
 
         except discord.errors.LoginFailure:
             # Add if token, else
